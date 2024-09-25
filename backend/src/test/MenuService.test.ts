@@ -14,7 +14,7 @@ describe("MenuService", () => {
       const mockMenu = { type: "breakfast" };
       (Menu.findOne as jest.Mock).mockResolvedValue(mockMenu);
 
-      const menu = await MenuService.getActiveMenu();
+      const menu = await new MenuService().getActiveMenu();
       expect(menu).toEqual(mockMenu);
       expect(Menu.findOne).toHaveBeenCalledWith({ type: expect.any(String) });
     });
@@ -22,7 +22,7 @@ describe("MenuService", () => {
     it("should throw an error if fetching active menu fails", async () => {
       (Menu.findOne as jest.Mock).mockRejectedValue(new Error("Error"));
 
-      await expect(MenuService.getActiveMenu()).rejects.toThrow(
+      await expect(new MenuService().getActiveMenu()).rejects.toThrow(
         "Error fetching active menu"
       );
     });
@@ -32,7 +32,7 @@ describe("MenuService", () => {
         new Error("Error fetching active menu")
       );
 
-      await expect(MenuService.getActiveMenu()).rejects.toThrow(
+      await expect(new MenuService().getActiveMenu()).rejects.toThrow(
         "Error fetching active menu"
       );
     });
@@ -42,7 +42,7 @@ describe("MenuService", () => {
         new Error("Database connection error")
       );
 
-      await expect(MenuService.getMenuItems("1")).rejects.toThrow(
+      await expect(new MenuService().getMenuItems("1")).rejects.toThrow(
         "Database connection error"
       );
     });
@@ -54,13 +54,13 @@ describe("MenuService", () => {
       const mockMenu = { menuItems: [mockMenuItem] };
       (Menu.find as jest.Mock).mockResolvedValue([mockMenu]);
 
-      const menuItem = await MenuService.getMenuItem("1");
+      const menuItem = await new MenuService().getMenuItem("1");
       expect(menuItem).toEqual(mockMenuItem);
     });
 
     it("should return null if menu item is not found", async () => {
       (Menu.find as jest.Mock).mockResolvedValue([]);
-      const menu = await MenuService.getMenuItem("1");
+      const menu = await new MenuService().getMenuItem("1");
 
       expect(menu).toBeNull();
     });
@@ -68,7 +68,7 @@ describe("MenuService", () => {
     it("should throw an error if fetching menu item fails", async () => {
       (Menu.find as jest.Mock).mockRejectedValue(new Error("Error"));
 
-      await expect(MenuService.getMenuItem("1")).rejects.toThrow("Error");
+      await expect(new MenuService().getMenuItem("1")).rejects.toThrow("Error");
     });
 
     it("should handle database retrieval error gracefully", async () => {
@@ -76,7 +76,7 @@ describe("MenuService", () => {
         new Error("Database connection error")
       );
 
-      await expect(MenuService.getMenuItems("1")).rejects.toThrow(
+      await expect(new MenuService().getMenuItems("1")).rejects.toThrow(
         "Database connection error"
       );
     });
@@ -88,13 +88,13 @@ describe("MenuService", () => {
       const mockMenu = { menuId: "1", menuItems: mockMenuItems };
       (Menu.find as jest.Mock).mockResolvedValue([mockMenu]);
 
-      const menuItems = await MenuService.getMenuItems("1");
+      const menuItems = await new MenuService().getMenuItems("1");
       expect(menuItems).toEqual(mockMenuItems);
     });
 
     it("should return empty array if menu is not found", async () => {
       (Menu.find as jest.Mock).mockResolvedValue([]);
-      const menu = await MenuService.getMenuItems("1");
+      const menu = await new MenuService().getMenuItems("1");
 
       expect(menu).toEqual([]);
     });
@@ -102,7 +102,9 @@ describe("MenuService", () => {
     it("should throw an error if fetching menu items fails", async () => {
       (Menu.find as jest.Mock).mockRejectedValue(new Error("Error"));
 
-      await expect(MenuService.getMenuItems("1")).rejects.toThrow("Error");
+      await expect(new MenuService().getMenuItems("1")).rejects.toThrow(
+        "Error"
+      );
     });
 
     it("should handle database retrieval error gracefully", async () => {
@@ -110,7 +112,7 @@ describe("MenuService", () => {
         new Error("Database connection error")
       );
 
-      await expect(MenuService.getMenuItems("1")).rejects.toThrow(
+      await expect(new MenuService().getMenuItems("1")).rejects.toThrow(
         "Database connection error"
       );
     });

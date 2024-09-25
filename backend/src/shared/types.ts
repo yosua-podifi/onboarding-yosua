@@ -57,7 +57,7 @@ export interface NotificationDTO {
   notificationData: string[];
 }
 
-export type MenuItemType = {
+export type MenuItemDTO = {
   menuItemId: string;
   name: string;
   description: string;
@@ -65,10 +65,24 @@ export type MenuItemType = {
   imageUrl: string;
 };
 
-export type MenuType = {
+export type MenuDTO = {
   menuId: string;
-  menuItems: MenuItemType[];
+  menuItems: MenuItemDTO[];
   startTime: string;
   endTime: string;
   type: "breakfast" | "lunch" | "dinner";
+};
+
+export type OrderItemDTO = {
+  menuItemId: string;
+  quantity: number;
+  menuItemName: string;
+  menuItemDescription: string;
+  menuItemPrice: number;
+  itemTotal: number;
+};
+
+export type OrderDTO = {
+  orderItems: OrderItemDTO[];
+  totalOrderPrice: number;
 };

@@ -46,13 +46,13 @@ class MenuService {
   }
 
   // Get a specific menu item by its ID
-  async getMenuItem(menuItemId: string) {
+  async getMenuItem(menuItemId: string | number) {
     const menus = await Menu.find();
 
     try {
       for (const menu of menus) {
         const menuItem = menu.menuItems.find(
-          (item: any) => item.menuItemId === menuItemId
+          (item: any) => item.menuItemId == menuItemId
         );
         if (menuItem) return menuItem;
       }
@@ -78,4 +78,4 @@ class MenuService {
   }
 }
 
-export default new MenuService();
+export default MenuService;

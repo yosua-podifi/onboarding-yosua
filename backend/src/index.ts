@@ -11,7 +11,8 @@ import myHotelRoutes from "./routes/my-hotels";
 import hotelRoutes from "./routes/hotels";
 import bookingRoutes from "./routes/my-bookings";
 
-import menuController from "./routes/MenuController";
+import menuRoutes from "./routes/menu";
+import orderRoutes from "./routes/order";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -40,7 +41,8 @@ app.use("/api/my-hotels", myHotelRoutes);
 app.use("/api/hotels", hotelRoutes);
 app.use("/api/my-bookings", bookingRoutes);
 
-app.use("/menu", menuController);
+app.use("/api/menu", menuRoutes);
+app.use("/api/order", orderRoutes);
 
 app.get("*", (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, "../../frontend/dist/index.html"));
