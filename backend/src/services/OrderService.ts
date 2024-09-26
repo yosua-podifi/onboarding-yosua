@@ -1,10 +1,13 @@
 import Order from "../models/order";
 import MenuService from "./MenuService";
+import NotificationService from "./NotificationService";
 
 class OrderService {
   menu: MenuService;
+  notificationService: NotificationService;
   constructor() {
     this.menu = new MenuService();
+    this.notificationService = new NotificationService();
   }
 
   async addToOrder(itemId: string, quantity: number) {
@@ -32,7 +35,7 @@ class OrderService {
         }
       );
 
-      this.updateOrderTotal();
+      await this.updateOrderTotal();
 
       return updatedItem;
     } else {
@@ -63,12 +66,13 @@ class OrderService {
             menuItemDescription: menuItem.description,
             menuItemPrice: menuItem.price,
             itemTotal: menuItem.price * quantity,
+            menuItemImageUrl: menuItem.imageUrl,
           },
         },
       }
     );
 
-    this.updateOrderTotal();
+    await this.updateOrderTotal();
 
     return addedItem;
   }
@@ -126,7 +130,7 @@ class OrderService {
       }
     );
 
-    this.updateOrderTotal();
+    await this.updateOrderTotal();
     return updatedItem;
   }
 
@@ -149,7 +153,7 @@ class OrderService {
         },
       }
     );
-    this.updateOrderTotal();
+    await this.updateOrderTotal();
 
     return updatedOrder;
   }
@@ -167,7 +171,7 @@ class OrderService {
       }
     );
 
-    this.updateOrderTotal();
+    await this.updateOrderTotal();
   }
 
   async updateOrderTotal() {

@@ -1,13 +1,40 @@
-import { FunctionComponent, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { FunctionComponent, useCallback, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import ItemDetailsCard from "../components/ItemDetailsCard";
+import axios from "axios";
+import { MenuItemDTO } from "../../../backend/src/shared/types";
+import { useNotificationStore } from "../store/notificationStore";
 
 const ItemDetail: FunctionComponent = () => {
   const navigate = useNavigate();
+  const { menuItemId } = useParams();
+  const [item, setItem] = useState<MenuItemDTO>();
+  const { setType } = useNotificationStore();
 
   const onBackButtonFrameIconClick = useCallback(() => {
     navigate("/homepage");
   }, [navigate]);
+
+  const fetchItem = async () => {
+    const res = await axios.get(
+      import.meta.env.VITE_BASE_URL! + `/menu/item/${menuItemId}`
+    );
+
+    setItem(res.data);
+  };
+
+  const addToOrder = async (menuItemId: string, quantity: number) => {
+    setType("Item Added");
+    await axios.post(import.meta.env.VITE_BASE_URL! + "/order/add", {
+      menuItemId: menuItemId,
+      quantity: quantity,
+    });
+  };
+
+  useEffect(() => {
+    setType("");
+    fetchItem();
+  }, []);
 
   return (
     <div className="relative bg-white w-full h-[1024px] overflow-hidden flex flex-col items-start justify-start sm:flex-col">
@@ -32,9 +59,12 @@ const ItemDetail: FunctionComponent = () => {
         </div>
         <div className="self-stretch flex flex-row items-start justify-center py-5 px-0">
           <ItemDetailsCard
-            itemDetailsCardItemImage="/itemdetailscarditemimageframe@2x.png"
-            itemDetailsCardItemName="A very big Mac"
-            itemDetailsCardItemPrice="$9.99"
+            menuItemId={item?.menuItemId}
+            addToOrder={addToOrder}
+            itemDetailsCardItemImage={item?.imageUrl}
+            itemDetailsCardItemName={item?.name}
+            itemDetailsCardItemPrice={item?.price}
+            itemDetailsCardItemDescription={item?.description}
           />
         </div>
       </section>

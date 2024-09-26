@@ -9,6 +9,7 @@ const orderItemSchema = new mongoose.Schema<OrderItemDTO>({
   menuItemDescription: { type: String, required: true },
   menuItemPrice: { type: Number, required: true },
   itemTotal: { type: Number, required: true },
+  menuItemImageUrl: { type: String, required: true },
 });
 
 // Order Schema

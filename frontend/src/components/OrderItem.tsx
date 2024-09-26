@@ -3,10 +3,14 @@ import { Input } from "@chakra-ui/react";
 
 type OrderItemType = {
   itemName?: string;
-  itemPrice?: string;
-  itemSubTotal?: string;
+  itemPrice?: number;
+  itemSubTotal?: number;
   orderItemImage?: string;
   orderItemSeparator?: string;
+  quantity: number;
+  menuItemId: string;
+  handleUpdateQuantity: (menuItemId: string, quantity: number) => void;
+  handleRemoveItem: (menuItemId: string) => void;
 };
 
 const OrderItem: FunctionComponent<OrderItemType> = ({
@@ -15,6 +19,10 @@ const OrderItem: FunctionComponent<OrderItemType> = ({
   itemSubTotal,
   orderItemImage,
   orderItemSeparator,
+  quantity,
+  menuItemId,
+  handleUpdateQuantity,
+  handleRemoveItem,
 }) => {
   return (
     <section className="w-full bg-white flex flex-col items-start justify-center max-w-[1200px] text-left text-base text-gray-300 font-aleo sm:flex-col">
@@ -31,35 +39,38 @@ const OrderItem: FunctionComponent<OrderItemType> = ({
             <b className="relative">{itemName}</b>
           </div>
           <div className="w-[43px] flex flex-row items-start justify-center text-sm font-work-sans">
-            <div className="relative">{itemPrice}</div>
+            <div className="relative">${itemPrice}</div>
           </div>
         </div>
         <div className="self-stretch flex-1 flex flex-row items-center justify-start gap-[10px] max-w-[320px] lg:max-w-[320px] sm:max-w-[200px]">
           <img
-            className="relative rounded-10xs w-[23px] h-[23px] object-cover"
-            alt=""
+            className="relative rounded-10xs w-[23px] h-[23px] object-cover cursor-pointer"
+            alt="increment quantity"
             src="/orderitemincrementquantityframe@2x.png"
+            onClick={() => handleUpdateQuantity(menuItemId, quantity + 1)}
           />
           <Input
             className="bg-[transparent] font-aleo font-bold text-base text-gray-100"
-            placeholder="1"
+            placeholder={quantity?.toString()}
             size="sm"
           />
           <img
-            className="relative rounded-10xs w-[23px] h-[23px] object-cover"
-            alt=""
+            className="relative rounded-10xs w-[23px] h-[23px] object-cover cursor-pointer"
+            alt="decrement quantity"
             src="/orderitemdecrementquantityframe@2x.png"
+            onClick={() => handleUpdateQuantity(menuItemId, quantity - 1)}
           />
-          <div className="w-[21px] overflow-hidden shrink-0 flex flex-row items-center justify-start py-0 px-[3px] box-border md:flex-col">
+          <div className="w-[21px] overflow-hidden shrink-0 flex flex-row items-center justify-start py-0 px-[3px] box-border md:flex-col cursor-pointer">
             <img
               className="relative w-[15px] h-5 object-cover lg:flex lg:w-[15px]"
-              alt=""
+              alt="remove item"
               src="/orderitemremoveimg@2x.png"
+              onClick={() => handleRemoveItem(menuItemId)}
             />
           </div>
         </div>
         <div className="self-stretch flex flex-row items-center justify-start py-0 pr-0 pl-1.5 md:min-w-[75px]">
-          <div className="relative">{itemSubTotal}</div>
+          <div className="relative">${itemSubTotal}</div>
         </div>
       </div>
       <div className="self-stretch flex flex-row items-center justify-start p-2.5">

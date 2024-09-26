@@ -1,20 +1,12 @@
+import { NotificationDTO } from "../shared/types";
+
 class NotificationService {
-  notifications: [];
-  constructor() {
-    this.notifications = [];
-  }
+  constructor() {}
 
   // Send a new notification
-  sendNotification(notification: never) {
-    // For now, just push to an in-memory array (can be expanded to actual messaging system later)
-    this.notifications.push(notification);
-    console.log("Notification Sent:", notification);
-  }
-
-  // Get all notifications (for debugging)
-  getAllNotifications() {
-    return this.notifications;
+  sendNotification(notification: NotificationDTO) {
+    return notification;
   }
 }
 
-module.exports = new NotificationService();
+export default NotificationService;

@@ -1,22 +1,48 @@
-import { FunctionComponent, useCallback } from "react";
+import { FunctionComponent, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
 import NotificationMsg from "../components/NotificationMsg";
 import ItemCard from "../components/ItemCard";
+import axios from "axios";
+import { MenuDTO } from "../../../backend/src/shared/types";
+import { useNotificationStore } from "../store/notificationStore";
 
 const Homepage: FunctionComponent = () => {
   const navigate = useNavigate();
+  const [menu, setMenu] = useState<MenuDTO>();
+  const { type, setType } = useNotificationStore();
 
   const onButtonContainerClick = useCallback(() => {
     navigate("/view-order");
   }, [navigate]);
 
-  const onItemCardContainerClick = useCallback(() => {
-    navigate("/item-detail");
-  }, [navigate]);
+  const onItemCardContainerClick = useCallback(
+    (menuItemId: string) => {
+      navigate(`/item-detail/${menuItemId}`);
+    },
+    [navigate]
+  );
 
   const onRefreshButtonFrameIconClick = useCallback(() => {
-    // Please sync "Homepage" to the project
+    setType("");
+    fetchMenu();
+  }, []);
+
+  const fetchMenu = async () => {
+    try {
+      const res = await axios.get(
+        import.meta.env.VITE_BASE_URL! + "/menu/active"
+      );
+
+      setMenu(res.data);
+    } catch (error) {
+      setType("No Menu");
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchMenu();
   }, []);
 
   return (
@@ -24,7 +50,9 @@ const Homepage: FunctionComponent = () => {
       <main className="self-stretch bg-white flex flex-col items-start justify-start py-[43px] px-5 gap-[20px]">
         <header className="self-stretch flex flex-row items-start justify-start gap-[36px] text-left text-13xl text-gray-100 font-aleo sm:flex-row sm:gap-[1px] sm:items-start sm:justify-start">
           <div className="flex flex-row items-start justify-between">
-            <b className="relative">Lunch Time Menu</b>
+            <b className="relative">
+              <span className="capitalize">{menu?.type} </span> Time Menu
+            </b>
           </div>
           <img
             className="relative w-[37px] h-[37px] overflow-hidden shrink-0 object-cover cursor-pointer"
@@ -47,71 +75,44 @@ const Homepage: FunctionComponent = () => {
             src="/separator@2x.png"
           />
         </div>
-        <NotificationMsg
-          notificationIconFrame="/notificationiconsuccess.png"
-          notificationMainMessage="Order successfully placed"
-        />
+        {type === "No Menu" && (
+          <NotificationMsg
+            notificationIconFrame="/notificationiconframe@2x.png"
+            notificationMainMessage="Nothing currently listed as available, please refresh menu"
+            notificationBackgroundColor="#FFEEAA"
+          />
+        )}
+
+        {type === "Item Added" && (
+          <NotificationMsg
+            notificationIconFrame="/notificationiconsuccess.png"
+            notificationMainMessage="Order successfully placed"
+          />
+        )}
+
+        {type === "Order Placed" && (
+          <NotificationMsg
+            notificationIconFrame="/notificationiconsuccess.png"
+            notificationMainMessage="Order successfully placed"
+          />
+        )}
+
         <section className="self-stretch flex flex-row flex-wrap items-start justify-start py-6 px-px gap-[30px]">
-          <ItemCard
-            menuItemCode="/itemcarditemimage@2x.png"
-            itemName="Big Mac"
-            itemPrice="$9.99"
-            itemCardItemImageFrameWidth="238px"
-            itemCardItemImageIconWidth="unset"
-            itemCardItemImageIconAlignSelf="stretch"
-            itemCardItemImageIconOverflow="hidden"
-            onItemCardContainerClick={onItemCardContainerClick}
-          />
-          <ItemCard
-            menuItemCode="/itemcarditemimage1@2x.png"
-            itemName="Quarter Pounder"
-            itemPrice="$12.99"
-            itemCardItemImageFrameWidth="238px"
-            itemCardItemImageIconWidth="unset"
-            itemCardItemImageIconAlignSelf="stretch"
-            itemCardItemImageIconOverflow="hidden"
-            onItemCardContainerClick={onItemCardContainerClick}
-          />
-          <ItemCard
-            menuItemCode="/itemcarditemimage2@2x.png"
-            itemName="Spicy McCrispy"
-            itemPrice="$10.99"
-            itemCardItemImageFrameWidth="238px"
-            itemCardItemImageIconWidth="unset"
-            itemCardItemImageIconAlignSelf="stretch"
-            itemCardItemImageIconOverflow="hidden"
-            onItemCardContainerClick={onItemCardContainerClick}
-          />
-          <ItemCard
-            menuItemCode="/itemcarditemimage1@2x.png"
-            itemName="Quarter Pounder"
-            itemPrice="$12.99"
-            itemCardItemImageFrameWidth="238px"
-            itemCardItemImageIconWidth="unset"
-            itemCardItemImageIconAlignSelf="stretch"
-            itemCardItemImageIconOverflow="hidden"
-            onItemCardContainerClick={onItemCardContainerClick}
-          />
-          <ItemCard
-            menuItemCode="/itemcarditemimage@2x.png"
-            itemName="Big Mac"
-            itemPrice="$9.99"
-            itemCardItemImageFrameWidth="238px"
-            itemCardItemImageIconWidth="unset"
-            itemCardItemImageIconAlignSelf="stretch"
-            itemCardItemImageIconOverflow="hidden"
-            onItemCardContainerClick={onItemCardContainerClick}
-          />
-          <ItemCard
-            menuItemCode="/itemcarditemimage2@2x.png"
-            itemName="Spicy McCrispy"
-            itemPrice="$10.99"
-            itemCardItemImageFrameWidth="238px"
-            itemCardItemImageIconWidth="unset"
-            itemCardItemImageIconAlignSelf="stretch"
-            itemCardItemImageIconOverflow="hidden"
-            onItemCardContainerClick={onItemCardContainerClick}
-          />
+          {menu?.menuItems.map((item) => (
+            <ItemCard
+              key={item.menuItemId}
+              menuItemCode={item.imageUrl}
+              itemName={item.name}
+              itemPrice={`$${item.price}`}
+              itemCardItemImageFrameWidth="238px"
+              itemCardItemImageIconWidth="unset"
+              itemCardItemImageIconAlignSelf="stretch"
+              itemCardItemImageIconOverflow="hidden"
+              onItemCardContainerClick={() =>
+                onItemCardContainerClick(item.menuItemId)
+              }
+            />
+          ))}
         </section>
       </main>
     </div>

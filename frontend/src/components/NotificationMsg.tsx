@@ -46,7 +46,7 @@ const NotificationMsg: FunctionComponent<NotificationMsgType> = ({
         src={notificationIconFrame}
       />
       <div
-        className="flex-1 flex flex-row items-center justify-start md:flex-1 md:items-center md:justify-start"
+        className="flex flex-row items-center justify-start md:flex-1 md:items-center md:justify-start"
         style={notificationMainMessageFrameStyle}
       >
         <b className="relative">{notificationMainMessage}</b>

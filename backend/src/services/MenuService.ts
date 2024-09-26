@@ -7,39 +7,23 @@ class MenuService {
   // Get the active menu, for now, let's assume it's the first menu
   async getActiveMenu() {
     try {
-      let menuType = "";
-      const currentTime = new Date();
-      if (currentTime) {
-        if (
-          (currentTime.getHours() === 8 && currentTime.getMinutes() >= 0) ||
-          (currentTime.getHours() > 8 && currentTime.getHours() < 12) ||
-          (currentTime.getHours() === 11 && currentTime.getMinutes() <= 59)
-        ) {
-          menuType = "breakfast";
-        } else if (
-          (currentTime.getHours() === 12 && currentTime.getMinutes() >= 0) ||
-          (currentTime.getHours() > 12 && currentTime.getHours() < 17) ||
-          (currentTime.getHours() === 16 && currentTime.getMinutes() <= 59)
-        ) {
-          menuType = "lunch";
-        } else if (
-          (currentTime.getHours() === 17 && currentTime.getMinutes() >= 0) ||
-          (currentTime.getHours() > 17 && currentTime.getHours() < 22) ||
-          (currentTime.getHours() === 22 && currentTime.getMinutes() <= 0)
-        ) {
-          menuType = "dinner";
-        }
-      }
+      // query menus between startHours and endHours
+      const menus = await Menu.find();
+      const menu: any = menus.find((m: any) => {
+        const startTime = m.startTime;
+        const endTime = m.endTime;
+        const currentHours = new Date().getHours();
 
-      const menu = await Menu.findOne({
-        type: menuType,
+        return currentHours >= startTime && currentHours < endTime;
       });
 
-      if (!menu) {
+      const res = await this.getMenuItems(menu.menuId);
+
+      if (!res) {
         throw new Error("No active menu available");
       }
 
-      return menu; // For simplicity, returning the first menu as the active one
+      return res; // For simplicity, returning the first menu as the active one
     } catch (error) {
       throw new Error("Error fetching active menu");
     }
@@ -69,7 +53,7 @@ class MenuService {
     try {
       const menu = menus.find((m) => m.menuId === menuId);
       if (menu) {
-        return menu.menuItems;
+        return menu;
       }
       return [];
     } catch (error) {

@@ -80,6 +80,7 @@ export type OrderItemDTO = {
   menuItemDescription: string;
   menuItemPrice: number;
   itemTotal: number;
+  menuItemImageUrl: string;
 };
 
 export type OrderDTO = {

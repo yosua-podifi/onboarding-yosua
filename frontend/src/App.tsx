@@ -65,7 +65,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Homepage />} />
         <Route path="/homepage" element={<Homepage />} />
-        <Route path="/item-detail" element={<ItemDetail />} />
+        <Route path="/item-detail/:menuItemId" element={<ItemDetail />} />
         <Route path="/view-order" element={<ViewOrder />} />
       </Routes>
     </Router>

@@ -11,7 +11,11 @@ const menuItemsSchema = new mongoose.Schema<MenuItemDTO>({
 
 const menuSchema = new mongoose.Schema<MenuDTO>({
   menuId: { type: String, required: true },
-  type: { type: String, required: true },
+  type: {
+    type: String,
+    enum: ["breakfast", "lunch", "dinner"],
+    required: true,
+  },
   startTime: { type: String, required: true },
   endTime: { type: String, required: true },
   menuItems: [menuItemsSchema],
